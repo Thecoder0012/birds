@@ -1,12 +1,19 @@
-const express = require('express');
-const app = express();
+const express = require('express'); // import
+const app = express(); // instantiate
+
+const birds = [
+    {id: 1, name: "Starling"}
+];
 
 app.get("/birds",(req,res) => {
-    res.send({message: "Birds"});
+    res.send({data: birds});
 });
 
 app.get("/birds/:id",(req,res) => {
-    res.send({message: `Bird id: ${req.params.id}`});
+    const foundBird = birds.find(bird => bird.id === Number(req.params.id));
+    res.send({data: foundBird});
 });
 
-app.listen(3000)
+app.listen(8080,() => {
+    console.log("Server started on port",8080);
+})
