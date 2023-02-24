@@ -61,18 +61,34 @@ app.post("/birds", (req, res) => {
 
 // update bird partially
 app.patch("/birds/:id", (req, res) => {
-  const bird = getBird(birds, getBirdId(req.params.id));
-  if (req.body.name != null) bird.name = req.body.name;
-  if (req.body.color != null) bird.color = req.body.color;
-  res.send(bird);
+    const birdIndex = birds.findIndex((bird) => bird.id === Number(req.params.id));
+    if(birdIndex === -1){
+          res.status(404).send({ data: bird, message: `No bird found with id ${req.params.id}`});
+    }else{
+      const foundBird = birds[birdIndex];
+      const updateBird = birds[birdIndex] = {...foundBird, ...req.body, id: foundBird.id}; // req.body replaces foundBird, and may also replace id, so we add id at last.
+      birds[birdIndex] = updateBird;
+      res.send({data: updateBird});
+    }
+  
+  // another solution
+  // const bird = getBird(birds, getBirdId(req.params.id));
+  // if (req.body.name != null) bird.name = req.body.name;
+  // if (req.body.color != null) bird.color = req.body.color;
+  // res.send(bird);
 });
 
 // delete bird
 app.delete("/birds/:id", (req, res) => {
-  const bird = getBird(birds, getBirdId(req.params.id));
-  const birdIndex = birds.indexOf(bird);
-  birds.splice(birdIndex, 1);
-  res.send(bird);
+  const bird = birds.findIndex(bird => bird.id === Number(req.params.id));
+  if(bird === -1){
+    res.status(404).send({data: bird, message: `No bird found with id ${req.params.id}` });
+  } else {
+    const deletedBird = birds.splice(bird, 1);
+    res.send({data: deletedBird});
+  }
+  
+
 });
 
 // start port on 8080
